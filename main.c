@@ -2,6 +2,34 @@
 #include <stdlib.h>
 #include <time.h>
 
+int CheckVictory(int m[4][4]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (m[i][j] == 2048) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int CheckDefeat(int m[4][4]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (m[i][j] == 0) {
+                return 0;
+            }
+            if (i < 3 && m[i][j] == m[i + 1][j]) {
+                return 0;
+            }
+            if (j < 3 && m[i][j] == m[i][j + 1]) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
 void NewBlock(int m[4][4], int *c) {
   int a, b, n = 2;
   if (rand() % 10 == 1) n = 4;
@@ -184,6 +212,14 @@ int main() {
     printf("\e[1;1H\e[2J"); //clear universal
     printf("Count: %d\n", count);
     PrintMatrix(matrix);
+    if (CheckVictory(matrix)) {
+            printf("Congratulations! You reached 2048!\n");
+            break;
+        }
+        if (CheckDefeat(matrix)) {
+            printf("Game Over! No more moves possible.\n");
+            break;
+        }
     scanf(" %c", &pos);
     MoveMatrix(matrix, pos, &count);
   }
