@@ -3,31 +3,31 @@
 #include <time.h>
 
 int CheckVictory(int m[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (m[i][j] == 2048) {
-                return 1;
-            }
-        }
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      if (m[i][j] == 2048) {
+        return 1;
+      }
     }
-    return 0;
+  }
+  return 0;
 }
 
 int CheckDefeat(int m[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (m[i][j] == 0) {
-                return 0;
-            }
-            if (i < 3 && m[i][j] == m[i + 1][j]) {
-                return 0;
-            }
-            if (j < 3 && m[i][j] == m[i][j + 1]) {
-                return 0;
-            }
-        }
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      if (m[i][j] == 0) {
+        return 0;
+      }
+      if (i < 3 && m[i][j] == m[i + 1][j]) {
+        return 0;
+      }
+      if (j < 3 && m[i][j] == m[i][j + 1]) {
+        return 0;
+      }
     }
-    return 1;
+  }
+  return 1;
 }
 
 void NewBlock(int m[4][4], int *c) {
@@ -62,7 +62,7 @@ void PrintMatrix(int m[4][4]) {
   }
 }
 
-void MoveMatrix(int m[4][4], char pos, int *c) {
+void MoveMatrix(int m[4][4], char pos, int *c, int *score) {
   int moved = 0;
 
   switch (pos) {
@@ -74,6 +74,7 @@ void MoveMatrix(int m[4][4], char pos, int *c) {
               if (m[k][j] != 0) {
                 if (m[k][j] == m[i][j]) {
                   m[i][j] *= 2;
+                  *score += m[i][j];
                   m[k][j] = 0;
                   (*c)--;
                   moved = 1;
@@ -105,6 +106,7 @@ void MoveMatrix(int m[4][4], char pos, int *c) {
               if (m[i][k] != 0) {
                 if (m[i][k] == m[i][j]) {
                   m[i][j] *= 2;
+                  *score += m[i][j];
                   m[i][k] = 0;
                   (*c)--;
                   moved = 1;
@@ -136,6 +138,7 @@ void MoveMatrix(int m[4][4], char pos, int *c) {
               if (m[k][j] != 0) {
                 if (m[k][j] == m[i][j]) {
                   m[i][j] *= 2;
+                  *score += m[i][j];
                   m[k][j] = 0;
                   (*c)--;
                   moved = 1;
@@ -167,6 +170,7 @@ void MoveMatrix(int m[4][4], char pos, int *c) {
               if (m[i][k] != 0) {
                 if (m[i][k] == m[i][j]) {
                   m[i][j] *= 2;
+                  *score += m[i][j];
                   m[i][k] = 0;
                   (*c)--;
                   moved = 1;
@@ -197,31 +201,29 @@ void MoveMatrix(int m[4][4], char pos, int *c) {
   }
 }
 
-
-
 int main() {
   srand(time(0));
   int matrix[4][4];
-  int count = 0;
+  int count = 0, score = 0;
   char pos = 0;
   ClearMatrix(matrix);
   NewBlock(matrix, &count);
   NewBlock(matrix, &count);
 
   while (1) {
-    printf("\e[1;1H\e[2J"); //clear universal
-    printf("Count: %d\n", count);
+    printf("\e[1;1H\e[2J"); // clear universal
+    printf("Score: %d Count: %d\n", score, count);
     PrintMatrix(matrix);
     if (CheckVictory(matrix)) {
-            printf("Congratulations! You reached 2048!\n");
-            break;
-        }
-        if (CheckDefeat(matrix)) {
-            printf("Game Over! No more moves possible.\n");
-            break;
-        }
+      printf("Congratulations! You reached 2048!\n");
+      break;
+    }
+    if (CheckDefeat(matrix)) {
+      printf("Game Over! No more moves possible.\n");
+      break;
+    }
     scanf(" %c", &pos);
-    MoveMatrix(matrix, pos, &count);
+    MoveMatrix(matrix, pos, &count, &score);
   }
   return 0;
 }
